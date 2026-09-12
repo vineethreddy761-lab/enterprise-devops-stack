@@ -30,3 +30,15 @@ This document outlines the technical challenges, root causes, and resolutions en
 1. **Startup Order & Readiness:** Containerized observability stacks require brief initialization windows (e.g., Grafana plugin setup) before upstream proxies can successfully establish TCP connections.
 2. **Path Rewriting Rules:** When proxying subpaths to services expecting root URIs, regex rewrite rules combined with clean `proxy_pass` syntax prevent URI duplication and empty replies.
 3. **State Management:** Local infrastructure state files (such as Terraform state) must be explicitly ignored in `.gitignore` to prevent unintended version control pollution and merge conflicts.
+
+---
+
+## Incident 4: Docker Compose & Terraform Container Naming Conflicts
+- **Symptom:** `Error response from daemon: Conflict. The container name is already in use.`
+- **Root Cause:** Overlapping container naming definitions between Terraform-managed resources and Docker Compose stack deployments.
+- **Resolution:** Ensured proper ownership by tearing down overlapping deployments (`terraform destroy` or `docker compose down`) prior to switching orchestration tools.
+
+## Incident 5: YAML Indentation & Mapping Syntax Errors
+- **Symptom:** `yaml: line X: mapping values are not allowed in this context`.
+- **Root Cause:** Incorrect indentation or unescaped inline additions inside `docker-compose.yml`.
+- **Resolution:** Maintained strict 2-space YAML formatting and validated structure using `docker compose config` before restarting services.

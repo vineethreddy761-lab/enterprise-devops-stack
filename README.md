@@ -1,23 +1,21 @@
 # Enterprise DevOps Stack
 
-A fully containerized enterprise DevOps stack orchestrated via Docker Compose and Terraform, featuring strict resource constraints, service isolation, Prometheus/Grafana observability, and an Nginx reverse proxy.
+A fully containerized enterprise DevOps stack orchestrated via Docker Compose and Terraform, featuring strict resource constraints, service isolation, complete observability (Prometheus, Grafana, Loki, Promtail, cAdvisor), and automated CI/CD validation.
 
 ## Architecture & Services
 
-- **Nginx (`nginx-proxy`)**: Acts as the reverse proxy routing entrypoint on port `80`.
-- **Grafana (`grafana`)**: Visualizes metrics and dashboards, accessible via the root path `/`.
-- **Prometheus (`prometheus`)**: Scrapes telemetry data, accessible via the proxied prefix path `/prometheus/`.
-- **Python Worker Nodes (`enterprise-node-1`, `enterprise-node-2`)**: Resource-constrained target workloads managed via Docker and Terraform.
-
-## Network & Security
-- All services communicate over an isolated Docker bridge network (`enterprise-net`).
-- Strict CPU and memory limits are enforced across all containers via resource constraints.
+- **Nginx (`nginx-proxy`)**: Reverse proxy routing entrypoint on port `80`.
+- **Grafana (`grafana`)**: Visualizes metrics and logs, accessible via `/`.
+- **Prometheus (`prometheus`)**: Scrapes telemetry data, accessible via `/prometheus/`.
+- **Grafana Loki (`loki`)**: Centralized log aggregation engine.
+- **Promtail (`promtail`)**: Agent responsible for gathering and shipping container logs to Loki.
+- **cAdvisor (`cadvisor`)**: Provides granular container resource usage metrics.
+- **Python Worker Nodes (`enterprise-node-1`, `enterprise-node-2`)**: Resource-constrained target workloads managed via Terraform.
 
 ## Endpoints
 
 - Grafana UI: `http://localhost/`
 - Prometheus UI: `http://localhost/prometheus/`
 
-## Infrastructure as Code (Terraform)
-- Managed via Terraform (`terraform/`) for repeatable container and network provisioning.
-- State files are excluded from version control via `.gitignore`.
+## CI/CD Automation
+- Validated automatically via GitHub Actions on every pull request and push to `main` (checking Terraform configurations and Docker Compose syntax).
