@@ -22,10 +22,6 @@ jobs:
           terraform init -backend=false
           terraform validate
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Validate Docker Compose Configuration
-        uses: Docker/compose-action@v2
-        with:
-          command: config
+        run: |
+          docker compose config
