@@ -1,0 +1,16 @@
+---
+- name: Enterprise Node Configuration and Hardening
+  hosts: enterprise_nodes
+  gather_facts: no
+
+  tasks:
+    - name: Ensure baseline administrative group exists
+      group:
+        name: sysadmin
+        state: present
+
+    - name: Create audit directory structure
+      file:
+        path: /var/log/enterprise_audit
+        state: directory
+        mode: '0750'
