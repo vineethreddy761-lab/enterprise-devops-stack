@@ -1,33 +1,19 @@
 # Enterprise DevOps Stack
 
-A robust, multi-node enterprise DevOps environment containerized with Docker Compose, featuring integrated monitoring, visualization tools, and automated system verification workflows.
+A fully containerized enterprise DevOps stack orchestrated via Docker Compose, featuring strict resource constraints, service isolation, Prometheus/Grafana observability, and an Nginx reverse proxy.
 
-## Architecture & Stack Components
+## Architecture & Services
 
-* **Enterprise Nodes**: Python-based containerized workloads (`enterprise-node-1`, `enterprise-node-2`).
-* **Observability**: Prometheus for metrics collection and target scraping.
-* **Visualization**: Grafana for dashboarding and operational analytics.
-* **Orchestration**: Docker Compose.
+- **Nginx (`nginx-proxy`)**: Acts as the reverse proxy routing entrypoint on port `80`.
+- **Grafana (`grafana`)**: Visualizes metrics and dashboards, accessible via the root path `/`.
+- **Prometheus (`prometheus`)**: Scrapes telemetry data, accessible via the proxied prefix path `/prometheus/`.
+- **Python Nodes (`enterprise-node-1`, `enterprise-node-2`)**: Resource-constrained target workloads.
 
-## Getting Started
+## Network & Security
+- All services communicate over an isolated Docker bridge network (`enterprise-net`).
+- Strict CPU and memory limits are enforced across all containers via Docker Compose resource constraints.
 
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/vineethreddy761-lab/enterprise-devops-stack.git](https://github.com/vineethreddy761-lab/enterprise-devops-stack.git)
-   cd enterprise-devops-stack```
+## Endpoints
 
-
-
-
-2. Spin up the entire stack using Docker Compose:
-   ```bash
-    docker compose up -d```
-
-
-
-
-3. Access the services:
-
-Prometheus UI: http://localhost:9090
-
-Grafana UI: http://localhost:3000
+- Grafana UI: `http://localhost/`
+- Prometheus UI: `http://localhost/prometheus/`
