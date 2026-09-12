@@ -1,0 +1,11 @@
+groups:
+  - name: container_alerts
+    rules:
+      - alert: ContainerHighCPU
+        expr: sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service!=""}[5m])) by (container_label_com_docker_compose_service) > 0.8
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container high CPU usage"
+          description: "Container {{ $labels.container_label_com_docker_compose_service }} CPU usage is above 80% for over 2 minutes."
