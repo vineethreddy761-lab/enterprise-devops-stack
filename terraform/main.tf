@@ -19,7 +19,7 @@ resource "docker_network" "enterprise_net" {
 
 resource "docker_container" "enterprise_nodes" {
   count    = var.node_count
-  image    = "ubuntu:22.04"
+  image    = "python:3.10-slim"
   name     = "enterprise-node-${count.index + 1}"
   hostname = "node-${count.index + 1}"
   must_run = true
