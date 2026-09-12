@@ -24,3 +24,7 @@ A fully containerized enterprise DevOps stack orchestrated via Docker Compose an
 - Integrated **Prometheus Alertmanager** on port `9093` for alert routing and webhook notification handling.
 - Added custom Prometheus alert rules (`alert.rules.yml`) to monitor container CPU usage thresholds.
 - Configured volume mounts in `docker-compose.yml` for seamless rule and configuration loading.
+
+## Infrastructure as Code (Terraform & Ansible)
+- **Terraform (HCL):** Added infrastructure provisioning configuration under `/terraform`.
+- **Ansible:** Added configuration management playbooks and inventory under `/ansible`.

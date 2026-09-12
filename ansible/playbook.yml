@@ -1,0 +1,14 @@
+---
+- name: Configure Enterprise DevOps Stack Nodes
+  hosts: devops_nodes
+  become: false
+  tasks:
+    - name: Ensure stack directories exist
+      file:
+        path: "{{ playbook_dir }}/../logs"
+        state: directory
+        mode: '0755'
+
+    - name: Print configuration status
+      debug:
+        msg: "Ansible playbook executed successfully for Enterprise DevOps Stack."

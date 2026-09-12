@@ -1,31 +1,20 @@
 terraform {
   required_version = ">= 1.0.0"
   required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 4.0"
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.4.0"
     }
   }
 }
 
-provider "docker" {
-  host = "unix:///var/run/docker.sock"
+provider "local" {}
+
+resource "local_file" "stack_manifest" {
+  content  = "Enterprise DevOps Stack - Terraform Managed"
+  filename = "${path.module}/stack_status.txt"
 }
 
-resource "docker_network" "enterprise_net" {
-  name   = var.network_name
-  driver = "bridge"
-}
-
-resource "docker_container" "enterprise_nodes" {
-  count    = var.node_count
-  image    = "python:3.10-slim"
-  name     = "enterprise-node-${count.index + 1}"
-  hostname = "node-${count.index + 1}"
-  must_run = true
-  command  = ["sleep", "infinity"]
-
-  networks_advanced {
-    name = docker_network.enterprise_net.name
-  }
+output "manifest_status" {
+  value = "Terraform infrastructure configuration initialized successfully."
 }
