@@ -1,0 +1,1 @@
+{"components":["prometheus","grafana","alertmanager","loki","nginx"],"environment":"local-production","managed_by":"Terraform","stack":"Enterprise-DevOps-Stack"}

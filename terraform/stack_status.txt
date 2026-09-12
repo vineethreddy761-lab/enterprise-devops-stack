@@ -1,1 +1,0 @@
-Enterprise DevOps Stack - Terraform Managed

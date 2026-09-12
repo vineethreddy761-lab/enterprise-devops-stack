@@ -10,11 +10,27 @@ terraform {
 
 provider "local" {}
 
-resource "local_file" "stack_manifest" {
-  content  = "Enterprise DevOps Stack - Terraform Managed"
-  filename = "${path.module}/stack_status.txt"
+variable "stack_name" {
+  type    = string
+  default = "Enterprise-DevOps-Stack"
 }
 
-output "manifest_status" {
-  value = "Terraform infrastructure configuration initialized successfully."
+variable "environment" {
+  type    = string
+  default = "local-production"
+}
+
+resource "local_file" "stack_manifest" {
+  content  = jsonencode({
+    stack       = var.stack_name
+    environment = var.environment
+    managed_by  = "Terraform"
+    components  = ["prometheus", "grafana", "alertmanager", "loki", "nginx"]
+  })
+  filename = "${path.module}/stack_manifest.json"
+}
+
+output "manifest_path" {
+  value       = local_file.stack_manifest.filename
+  description = "Path to the generated stack manifest JSON file."
 }

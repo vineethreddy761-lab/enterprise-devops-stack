@@ -1,14 +1,19 @@
 ---
-- name: Configure Enterprise DevOps Stack Nodes
+- name: Configure and Verify Enterprise DevOps Stack
   hosts: devops_nodes
   become: false
   tasks:
-    - name: Ensure stack directories exist
+    - name: Ensure stack logs directory exists
       file:
         path: "{{ playbook_dir }}/../logs"
         state: directory
         mode: '0755'
 
-    - name: Print configuration status
+    - name: Read Terraform stack manifest
+      slurp:
+        src: "{{ playbook_dir }}/../terraform/stack_manifest.json"
+      register: stack_manifest
+
+    - name: Parse and display stack components
       debug:
-        msg: "Ansible playbook executed successfully for Enterprise DevOps Stack."
+        msg: "Managed Stack Components: {{ (stack_manifest['content'] | b64decode | from_json)['components'] }}"
