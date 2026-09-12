@@ -28,3 +28,7 @@ A fully containerized enterprise DevOps stack orchestrated via Docker Compose an
 ## Infrastructure as Code (Terraform & Ansible)
 - **Terraform (HCL):** Added infrastructure provisioning configuration under `/terraform`.
 - **Ansible:** Added configuration management playbooks and inventory under `/ansible`.
+
+## Infrastructure Automation Workflow
+- **Terraform:** Automatically generates a structured `stack_manifest.json` file capturing environment components.
+- **Ansible:** Consumes the Terraform-generated JSON manifest dynamically via the `slurp` module to verify active stack components during playbook execution.

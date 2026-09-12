@@ -7,3 +7,7 @@
 ### Milestone: Infrastructure as Code & Automation Integration
 - Integrated Terraform for declarative configuration management.
 - Added Ansible playbooks for automated orchestration and environment setup.
+
+### Milestone: Terraform & Ansible Interoperability
+- Established a robust pipeline where Terraform provisions and outputs structured JSON metadata (`stack_manifest.json`).
+- Configured Ansible playbooks to parse the manifest dynamically, bridging infrastructure provisioning with configuration management.
