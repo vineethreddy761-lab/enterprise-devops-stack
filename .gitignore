@@ -6,3 +6,9 @@ terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
+# Terraform state files
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+.terraform/
+*.tfstate
+*.tfstate.*
