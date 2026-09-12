@@ -1,28 +1,32 @@
-# Enterprise DevOps Project - Post-Mortem & Learnings Log
+# Post-Mortem & Technical Learnings: Enterprise DevOps Stack
 
-This document tracks engineering challenges, errors, root causes, and resolutions encountered during the automated deployment of the Enterprise Hybrid-Fabric Infrastructure Stack.
-
----
-## Log Entry Template
-- **Date/Phase:** 
-- **Component:** (e.g., Terraform, Ansible, Jenkins, Docker)
-- **Error / Symptom:** 
-- **Root Cause:** 
-- **Remediation / Fix:** 
-- **Key Learning:** 
+## Overview
+This document outlines the technical challenges, root causes, and resolutions encountered during the deployment of the containerized enterprise DevOps stack featuring Prometheus, Grafana, resource-constrained Python nodes, and an Nginx reverse proxy.
 
 ---
-- **Date/Phase:** June 2026 / Phase 2 (Terraform)
-- **Component:** Terraform Docker Provider API Mismatch
-- **Error / Symptom:** `client version 1.41 is too old. Minimum supported API version is 1.44`
-- **Root Cause:** Older provider version `3.0.1` was incompatible with the host's modern Docker daemon API.
-- **Remediation / Fix:** Upgraded the `kreuzwerker/docker` provider version requirement to `~> 4.0` in `main.tf` and reinitialized via `terraform init -upgrade`.
-- **Key Learning:** Keeping Terraform provider plugins updated ensures compatibility with modern host container daemon API versions.
+
+## Incident 1: Nginx Port Binding Conflicts (Port 80)
+- **Symptom:** `curl` returned HTTP status `000` (connection refused/failed).
+- **Root Cause:** Host port `80` was bound or conflicted with existing system services.
+- **Resolution:** Validated host port usage via `ss`, verified container binding behavior, and mapped container port `80` to an available unprivileged host port or direct interface binding where applicable.
 
 ---
-- **Date/Phase:** June 2026 / Phase 3 (Ansible)
-- **Component:** Ansible Docker Connection & Python Interpreter
-- **Error / Symptom:** `Module result deserialization failed: No start of json char found` and `/bin/sh: 1: sudo: not found`.
-- **Root Cause:** Base `ubuntu:22.04` images lacked Python 3, and `ansible_connection=docker` executes as root directly, making `become: yes` (sudo) invalid.
-- **Remediation / Fix:** Switched Terraform container images to `python:3.10-slim` and updated the playbook to omit privilege escalation (`become: yes`) and fact-gathering where appropriate.
-- **Key Learning:** Containerized Ansible targets require pre-installed Python interpreters and direct root execution without `sudo`.
+
+## Incident 2: Nginx Configuration Syntax Errors
+- **Symptom:** Container exited immediately with `emerg "events" directive is not allowed here`.
+- **Root Cause:** Placing top-level directives (`events {}` or `http {}`) inside files mounted in `/etc/nginx/conf.d/`, which are automatically included *within* the main Nginx configuration's `http` block.
+- **Resolution:** Stripped outer blocks from `nginx.conf`, ensuring it contains only valid `server {}` blocks and location rules.
+
+---
+
+## Incident 3: Upstream Resolution & 502 Bad Gateway
+- **Symptom:** Returning `502 Bad Gateway` or `52 Empty reply from server`.
+- **Root Cause:** Nginx resolving upstream container hostnames (`grafana`, `prometheus`) at startup before they are fully initialized, or using dynamic variables (`proxy_pass $variable`) without an explicit resolver directive.
+- **Resolution:** Used direct service name resolution (`proxy_pass http://grafana:3000;`) combined with proper path-prefix stripping (`rewrite ^/prometheus/(.*)$ /$1 break;`) to allow graceful runtime proxying.
+
+---
+
+## Key Takeaways
+1. **Startup Order & Readiness:** Containerized observability stacks require brief initialization windows (e.g., Grafana plugin setup) before upstream proxies can successfully establish TCP connections.
+2. **Path Rewriting Rules:** When proxying subpaths to services expecting root URIs, regex rewrite rules combined with clean `proxy_pass` syntax prevent URI duplication and empty replies.
+3. **State Management:** Local infrastructure state files (such as Terraform state) must be explicitly ignored in `.gitignore` to prevent unintended version control pollution and merge conflicts.
