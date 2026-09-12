@@ -19,3 +19,8 @@ A fully containerized enterprise DevOps stack orchestrated via Docker Compose an
 
 ## CI/CD Automation
 - Validated automatically via GitHub Actions on every pull request and push to `main` (checking Terraform configurations and Docker Compose syntax).
+
+## Recent Updates: Alerting & Observability
+- Integrated **Prometheus Alertmanager** on port `9093` for alert routing and webhook notification handling.
+- Added custom Prometheus alert rules (`alert.rules.yml`) to monitor container CPU usage thresholds.
+- Configured volume mounts in `docker-compose.yml` for seamless rule and configuration loading.
